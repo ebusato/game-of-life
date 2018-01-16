@@ -35,7 +35,8 @@ func (c *Cell) IsAlive() bool {
 }
 
 type Grid struct {
-	C [][]Cell
+	C      [][]Cell
+	CAlive []*Cell // points to alive cells at any step
 }
 
 func NewGrid() *Grid {
@@ -50,7 +51,7 @@ func NewGrid() *Grid {
 func (g *Grid) InitRandom() {
 	for i := range g.C {
 		for j := range g.C[i] {
-			c := g.C[i][j]
+			c := &g.C[i][j]
 			c.i = i
 			c.j = j
 			rand := rand.Float64()
@@ -58,6 +59,7 @@ func (g *Grid) InitRandom() {
 				c.state = Dead
 			} else {
 				c.state = Alive
+				g.CAlive = append(g.CAlive, c)
 			}
 		}
 	}
@@ -94,6 +96,29 @@ func (g *Grid) Neighbours(c *Cell) []*Cell {
 		if c.i < N-1 {
 			neighbours = append(neighbours, &g.C[c.i+1][c.j+1])
 		}
+	}
+	return neighbours
+}
+
+func (g *Grid) NoAliveDeadNeighbours(c *Cell) (int, int) { // first: alive, second: dead
+	neighbours := g.Neighbours(c)
+	var noalive, nodead int
+	for _, n := range neighbours {
+		switch n.state {
+		case Alive:
+			noalive++
+		case Dead:
+			nodead++
+		default:
+			panic("error !")
+		}
+	}
+	return noalive, nodead
+}
+
+func (g *Grid) Evolve() {
+	for _, c := range g.GAlive {
+
 	}
 }
 
