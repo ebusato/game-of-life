@@ -72,6 +72,18 @@ func (g *Grid) InitRandom() {
 	}
 }
 
+// The video referred to is
+//   https://www.youtube.com/watch?v=S-W0NX97DB0
+func (g *Grid) InitFirstExampleVideo() {
+	fmt.Println("N/2", N/2, N/2+1, N/2-1)
+	g.C[N/2][N/2].state = Alive
+	g.C[N/2+1][N/2].state = Alive
+	g.C[N/2][N/2+1].state = Alive
+	g.C[N/2][N/2+2].state = Alive
+	g.C[N/2][N/2+3].state = Alive
+	g.C[N/2][N/2-1].state = Alive
+}
+
 func (g *Grid) InitToto() {
 	fmt.Println("N/2", N/2, N/2+1, N/2-1)
 	g.C[N/2][N/2].state = Alive
@@ -216,7 +228,8 @@ func main() {
 	///////////////////////////////////////////////////////////////
 	// Simple example of grid construction and initialization
 	grid := NewGrid()
-	grid.InitToto()
+	//grid.InitToto()
+	grid.InitFirstExampleVideo()
 	for i := 0; ; i++ {
 		fmt.Println("step", i)
 		time.Sleep(100 * time.Millisecond)
