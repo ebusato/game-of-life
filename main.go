@@ -6,14 +6,9 @@ package main
 import (
 	"flag"
 	"fmt"
-	"image/color"
 	"math/rand"
 
-	"go-hep.org/x/hep/hplot"
 	"golang.org/x/exp/shiny/driver"
-	"gonum.org/v1/plot/plotter"
-	"gonum.org/v1/plot/vg"
-	"gonum.org/v1/plot/vg/draw"
 )
 
 var (
@@ -58,10 +53,6 @@ func NewGrid() *Grid {
 		}
 	}
 	return G
-}
-
-func (g *Grid) Init() {
-	g.InitRandom()
 }
 
 func (g *Grid) InitRandom() {
@@ -194,74 +185,15 @@ func (g *Grid) Evolve() {
 	}
 }
 
-func (g *Grid) Draw() *hplot.Plot {
-	p := Plot(g)
-	return p
-}
+var grid *Grid
 
-type Points struct {
-	N int
-	X []float64
-	Y []float64
-}
-
-func NewPoints(g *Grid) *Points {
-	points := &Points{}
-	for i := range g.C {
-		for j := range g.C[i] {
-			c := &g.C[i][j]
-			//fmt.Println("In NewPoints:", c.i, c.j, c.state)
-			if c.state == Alive {
-				points.N += 1
-				points.X = append(points.X, float64(c.j)) // column
-				points.Y = append(points.Y, float64(c.i)) // row
-			}
-		}
-	}
-	return points
-}
-
-func (p *Points) Len() int {
-	return p.N
-}
-
-func (p *Points) XY(i int) (x, y float64) {
-	return p.X[i], p.Y[i]
-}
-
-func Plot(grid *Grid) *hplot.Plot {
-	points := NewPoints(grid)
-	sca, _ := plotter.NewScatter(points)
-	sca.GlyphStyle.Color = color.RGBA{255, 0, 0, 255}
-	sca.GlyphStyle.Radius = vg.Points(3)
-	sca.GlyphStyle.Shape = draw.BoxGlyph{}
-
-	p := hplot.New()
-	p.X.Min = -0.5
-	p.X.Max = float64(N) + 0.5
-	// 	p.X.Label.Text = "j"
-	p.Y.Min = -0.5
-	p.Y.Max = float64(N) + 0.5
-	// 	p.Y.Label.Text = "i"
-	p.X.Tick.Marker = &hplot.FreqTicks{N: N + 2, Freq: 1}
-	p.X.Tick.Label.Font.Size = 0
-	p.X.Tick.Length = 0
-	p.Y.Tick.Length = 0
-	p.Y.Tick.Marker = &hplot.FreqTicks{N: N + 2, Freq: 1}
-	p.Y.Tick.Label.Font.Size = 0
-	p.Add(sca, plotter.NewGrid())
-
-	return p
+func init() {
+	grid = NewGrid()
+	grid.InitRandom()
 }
 
 func main() {
 	flag.Parse()
-	// 	grid := NewGrid()
-	// 	grid.InitFirstExampleVideo()
-	// 	grid.InitClignotant()
-	// 	grid.InitRuche()
-	// 	grid.Init4Clignotants()
-	// 	grid.InitDie()
-	// 	grid.InitRandom()
+
 	driver.Main(GridGraph)
 }
