@@ -3,9 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"image"
 	"image/color"
-	"log"
 	"math/rand"
 
 	"go-hep.org/x/hep/hplot"
@@ -21,7 +19,7 @@ import (
 
 var (
 	addrFlag = flag.String("addr", ":5555", "server address:port")
-	N        = 50
+	N        = 100
 	xmax     = 400
 	ymax     = 400
 )
@@ -255,7 +253,7 @@ func Plot(grid *Grid) *hplot.Plot {
 	points := NewPoints(grid)
 	sca, _ := plotter.NewScatter(points)
 	sca.GlyphStyle.Color = color.RGBA{255, 0, 0, 255}
-	sca.GlyphStyle.Radius = vg.Points(3.5)
+	sca.GlyphStyle.Radius = vg.Points(2.5)
 	sca.GlyphStyle.Shape = draw.BoxGlyph{}
 
 	p := hplot.New()
@@ -298,6 +296,10 @@ func main() {
 }
 */
 
+func display(scr screen.Screen) {
+
+}
+
 func main() {
 	flag.Parse()
 	grid := NewGrid()
@@ -308,64 +310,64 @@ func main() {
 	// 	grid.InitDie()
 	grid.InitRandom()
 	driver.Main(func(scr screen.Screen) {
-		w, err := newWidget(scr, image.Point{xmax, ymax})
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer w.Release()
+		// 		w, err := newWidget(scr, image.Point{xmax, ymax})
+		// 		if err != nil {
+		// 			log.Fatal(err)
+		// 		}
+		// 		defer w.Release()
 
-		w.canvas.Run(func(e interface{}) bool {
+		c, err := vgshiny.New(scr, vg.Length(xmax), vg.Length(ymax))
+		if err != nil {
+			panic(err)
+		}
+
+		c.Run(func(e interface{}) bool {
 			switch e := e.(type) {
 			case key.Event:
 				repaint := false
 				switch e.Code {
-				case key.CodeEscape, key.CodeQ:
+				case key.CodeQ:
 					if e.Direction == key.DirPress {
 						return false
 					}
-				case key.CodeR:
-					if e.Direction == key.DirPress {
-						repaint = true
-					}
-
-				case key.CodeN, key.CodeSpacebar:
+				case key.CodeSpacebar:
 					if e.Direction == key.DirPress {
 						p := Plot(grid)
-						p.Draw(draw.New(w.canvas))
+						p.Draw(draw.New(c))
 						grid.Evolve()
 						repaint = true
 					}
 				}
 				if repaint {
-					w.canvas.Send(paint.Event{})
+					c.Send(paint.Event{})
 				}
 
 			case paint.Event:
-				w.canvas.Paint()
+				c.Paint()
 			}
 			return true
 		})
 	})
 }
 
-type widget struct {
-	s      screen.Screen
-	canvas *vgshiny.Canvas
-}
+// type widget struct {
+// 	s      screen.Screen
+// 	canvas *vgshiny.Canvas
+// }
 
-func newWidget(s screen.Screen, size image.Point) (*widget, error) {
-	c, err := vgshiny.New(s, vg.Length(size.X), vg.Length(size.Y))
-	if err != nil {
-		return nil, err
-	}
+// func newWidget(s screen.Screen, size image.Point) (*widget, error) {
+// 	c, err := vgshiny.New(s, vg.Length(size.X), vg.Length(size.Y))
+// 	if err != nil {
+// 		return nil, err
+// 	}
+//
+// 	return &widget{s: s, canvas: c}, err
+// }
 
-	return &widget{s: s, canvas: c}, err
-}
-
-func (w *widget) Release() {
-	if w.canvas != nil {
-		w.canvas.Release()
-		w.canvas = nil
-	}
-	w.s = nil
-}
+// func (w *widget) Release() {
+// 	if w.canvas != nil {
+// 		w.canvas.Release()
+// 		w.canvas = nil
+// 	}
+// 	w.s = nil
+// }
