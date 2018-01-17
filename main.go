@@ -112,6 +112,14 @@ func (g *Grid) Init4Clignotants() {
 	g.C[N/2][N/2-2].state = Alive
 }
 
+func (g *Grid) InitDie() {
+	g.C[N/2][N/2].state = Alive
+	g.C[N/2][N/2+1].state = Alive
+	g.C[N/2+1][N/2].state = Alive
+	g.C[N/2+1][N/2+1].state = Alive
+	g.C[N/2+2][N/2].state = Alive
+}
+
 func (g *Grid) Neighbours(c *Cell) []*Cell {
 	var neighbours []*Cell
 	if c.i > 0 {
@@ -294,18 +302,19 @@ func main() {
 	// 	grid.InitClignotant()
 	// 	grid.InitRuche()
 	grid.Init4Clignotants()
+	// 	grid.InitDie()
 	driver.Main(func(scr screen.Screen) {
-		{
-			p := Plot(grid)
-			c, err := p.Show(-1, -1, scr)
-			if err != nil {
-				log.Fatal(err)
-			}
-			go func() {
-				c.Run(nil)
-				c.Release()
-			}()
-		}
+		// 		{
+		// 			p := Plot(grid)
+		// 			c, err := p.Show(-1, -1, scr)
+		// 			if err != nil {
+		// 				log.Fatal(err)
+		// 			}
+		// 			go func() {
+		// 				c.Run(nil)
+		// 				c.Release()
+		// 			}()
+		// 		}
 		w, err := newWidget(scr, image.Point{xmax, ymax})
 		if err != nil {
 			log.Fatal(err)
@@ -328,9 +337,9 @@ func main() {
 
 				case key.CodeN, key.CodeSpacebar:
 					if e.Direction == key.DirPress {
-						grid.Evolve()
 						p := Plot(grid)
 						p.Draw(draw.New(w.canvas))
+						grid.Evolve()
 						repaint = true
 					}
 				}
