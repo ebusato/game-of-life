@@ -12,7 +12,6 @@ import (
 )
 
 var (
-	addrFlag = flag.String("addr", ":5555", "server address:port")
 	N        = 100
 )
 
@@ -193,7 +192,5 @@ func init() {
 }
 
 func main() {
-	flag.Parse()
-
 	driver.Main(GridGraph)
 }
