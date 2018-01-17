@@ -153,9 +153,9 @@ func (g *Grid) NoAliveDeadNeighbours(c *Cell) (int, int) { // first: alive, seco
 	neighbours := g.Neighbours(c)
 	var noAlive, noDead int
 	for _, n := range neighbours {
-		if c.i == 2 {
-			fmt.Println("neighbour", n.i, n.j, n.state)
-		}
+		// 		if c.i == 2 {
+		// 			fmt.Println("neighbour", n.i, n.j, n.state)
+		// 		}
 		switch n.state {
 		case Alive:
 			noAlive++
@@ -174,8 +174,9 @@ func (g *Grid) Evolve() {
 	for i := range g.C {
 		for j := range g.C[i] {
 			c := &g.C[i][j]
-			noAliveNeighbours, noDeadNeighbours := g.NoAliveDeadNeighbours(c)
-			fmt.Println("numbers ", i, j, " :", noAliveNeighbours, noDeadNeighbours)
+			// 			noAliveNeighbours, noDeadNeighbours := g.NoAliveDeadNeighbours(c)
+			// 			fmt.Println("numbers ", i, j, " :", noAliveNeighbours, noDeadNeighbours)
+			noAliveNeighbours, _ := g.NoAliveDeadNeighbours(c)
 			switch {
 			case noAliveNeighbours == 3:
 				if c.state == Dead {
@@ -260,12 +261,14 @@ func Plot(grid *Grid) *hplot.Plot {
 	p := hplot.New()
 	p.X.Min = -0.5
 	p.X.Max = float64(N) + 0.5
-	p.X.Label.Text = "j"
+	// 	p.X.Label.Text = "j"
 	p.Y.Min = -0.5
 	p.Y.Max = float64(N) + 0.5
-	p.Y.Label.Text = "i"
+	// 	p.Y.Label.Text = "i"
 	p.X.Tick.Marker = &hplot.FreqTicks{N: N + 2, Freq: 1}
 	p.X.Tick.Label.Font.Size = 0
+	p.X.Tick.Length = 0
+	p.Y.Tick.Length = 0
 	p.Y.Tick.Marker = &hplot.FreqTicks{N: N + 2, Freq: 1}
 	p.Y.Tick.Label.Font.Size = 0
 	p.Add(sca, plotter.NewGrid())
@@ -301,20 +304,10 @@ func main() {
 	// 	grid.InitFirstExampleVideo()
 	// 	grid.InitClignotant()
 	// 	grid.InitRuche()
-	grid.Init4Clignotants()
+	// 	grid.Init4Clignotants()
 	// 	grid.InitDie()
+	grid.InitRandom()
 	driver.Main(func(scr screen.Screen) {
-		// 		{
-		// 			p := Plot(grid)
-		// 			c, err := p.Show(-1, -1, scr)
-		// 			if err != nil {
-		// 				log.Fatal(err)
-		// 			}
-		// 			go func() {
-		// 				c.Run(nil)
-		// 				c.Release()
-		// 			}()
-		// 		}
 		w, err := newWidget(scr, image.Point{xmax, ymax})
 		if err != nil {
 			log.Fatal(err)
