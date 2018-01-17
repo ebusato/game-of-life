@@ -1,3 +1,6 @@
+// TO DO
+//  - add text showing iteration
+
 package main
 
 import (
@@ -7,11 +10,7 @@ import (
 	"math/rand"
 
 	"go-hep.org/x/hep/hplot"
-	"go-hep.org/x/hep/hplot/vgshiny"
 	"golang.org/x/exp/shiny/driver"
-	"golang.org/x/exp/shiny/screen"
-	"golang.org/x/mobile/event/key"
-	"golang.org/x/mobile/event/paint"
 	"gonum.org/v1/plot/plotter"
 	"gonum.org/v1/plot/vg"
 	"gonum.org/v1/plot/vg/draw"
@@ -20,8 +19,6 @@ import (
 var (
 	addrFlag = flag.String("addr", ":5555", "server address:port")
 	N        = 100
-	xmax     = 400
-	ymax     = 400
 )
 
 type CellState uint8
@@ -61,6 +58,10 @@ func NewGrid() *Grid {
 		}
 	}
 	return G
+}
+
+func (g *Grid) Init() {
+	g.InitRandom()
 }
 
 func (g *Grid) InitRandom() {
@@ -193,6 +194,11 @@ func (g *Grid) Evolve() {
 	}
 }
 
+func (g *Grid) Draw() *hplot.Plot {
+	p := Plot(g)
+	return p
+}
+
 type Points struct {
 	N int
 	X []float64
@@ -223,37 +229,11 @@ func (p *Points) XY(i int) (x, y float64) {
 	return p.X[i], p.Y[i]
 }
 
-/*
-func Plot(grid *Grid) {
-	points := NewPoints(grid)
-	sca, _ := plotter.NewScatter(points)
-	sca.GlyphStyle.Color = color.RGBA{255, 0, 0, 255}
-	sca.GlyphStyle.Radius = vg.Points(3.5)
-	sca.GlyphStyle.Shape = draw.BoxGlyph{}
-
-	p, _ := plot.New()
-	p.X.Min = -0.5
-	p.X.Max = float64(N) + 0.5
-	p.X.Label.Text = "j"
-	p.Y.Min = -0.5
-	p.Y.Max = float64(N) + 0.5
-	p.Y.Label.Text = "i"
-	p.X.Tick.Marker = &hplot.FreqTicks{N: N + 2, Freq: 1}
-	p.X.Tick.Label.Font.Size = 0
-	p.Y.Tick.Marker = &hplot.FreqTicks{N: N + 2, Freq: 1}
-	p.Y.Tick.Label.Font.Size = 0
-	p.Add(sca, plotter.NewGrid())
-	p.Save(8*vg.Inch, 8*vg.Inch, "Grid2D.png")
-
-	datac <- Plots{Plot: renderSVG(p)}
-}
-*/
-
 func Plot(grid *Grid) *hplot.Plot {
 	points := NewPoints(grid)
 	sca, _ := plotter.NewScatter(points)
 	sca.GlyphStyle.Color = color.RGBA{255, 0, 0, 255}
-	sca.GlyphStyle.Radius = vg.Points(2.5)
+	sca.GlyphStyle.Radius = vg.Points(3)
 	sca.GlyphStyle.Shape = draw.BoxGlyph{}
 
 	p := hplot.New()
@@ -274,100 +254,14 @@ func Plot(grid *Grid) *hplot.Plot {
 	return p
 }
 
-/*
 func main() {
 	flag.Parse()
-	rand.Seed(time.Now().UTC().UnixNano())
-
-	go webServer(addrFlag)
-
-	///////////////////////////////////////////////////////////////
-	// Simple example of grid construction and initialization
-	grid := NewGrid()
-	//grid.InitToto()
-	grid.InitFirstExampleVideo()
-	for i := 0; ; i++ {
-		fmt.Println("step", i)
-		time.Sleep(100 * time.Millisecond)
-		grid.Evolve()
-		Plot(grid)
-	}
-	///////////////////////////////////////////////////////////////
-}
-*/
-
-func display(scr screen.Screen) {
-
-}
-
-func main() {
-	flag.Parse()
-	grid := NewGrid()
+	// 	grid := NewGrid()
 	// 	grid.InitFirstExampleVideo()
 	// 	grid.InitClignotant()
 	// 	grid.InitRuche()
 	// 	grid.Init4Clignotants()
 	// 	grid.InitDie()
-	grid.InitRandom()
-	driver.Main(func(scr screen.Screen) {
-		// 		w, err := newWidget(scr, image.Point{xmax, ymax})
-		// 		if err != nil {
-		// 			log.Fatal(err)
-		// 		}
-		// 		defer w.Release()
-
-		c, err := vgshiny.New(scr, vg.Length(xmax), vg.Length(ymax))
-		if err != nil {
-			panic(err)
-		}
-
-		c.Run(func(e interface{}) bool {
-			switch e := e.(type) {
-			case key.Event:
-				repaint := false
-				switch e.Code {
-				case key.CodeQ:
-					if e.Direction == key.DirPress {
-						return false
-					}
-				case key.CodeSpacebar:
-					if e.Direction == key.DirPress {
-						p := Plot(grid)
-						p.Draw(draw.New(c))
-						grid.Evolve()
-						repaint = true
-					}
-				}
-				if repaint {
-					c.Send(paint.Event{})
-				}
-
-			case paint.Event:
-				c.Paint()
-			}
-			return true
-		})
-	})
+	// 	grid.InitRandom()
+	driver.Main(GridGraph)
 }
-
-// type widget struct {
-// 	s      screen.Screen
-// 	canvas *vgshiny.Canvas
-// }
-
-// func newWidget(s screen.Screen, size image.Point) (*widget, error) {
-// 	c, err := vgshiny.New(s, vg.Length(size.X), vg.Length(size.Y))
-// 	if err != nil {
-// 		return nil, err
-// 	}
-//
-// 	return &widget{s: s, canvas: c}, err
-// }
-
-// func (w *widget) Release() {
-// 	if w.canvas != nil {
-// 		w.canvas.Release()
-// 		w.canvas = nil
-// 	}
-// 	w.s = nil
-// }
