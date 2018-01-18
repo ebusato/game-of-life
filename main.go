@@ -4,15 +4,13 @@
 package main
 
 import (
-	"flag"
-	"fmt"
 	"math/rand"
 
 	"golang.org/x/exp/shiny/driver"
 )
 
 var (
-	N        = 100
+	N = 100
 )
 
 type CellState uint8
@@ -68,6 +66,7 @@ func (g *Grid) InitRandom() {
 	}
 }
 
+/*
 // The video referred to is
 //   https://www.youtube.com/watch?v=S-W0NX97DB0
 func (g *Grid) InitFirstExampleVideo() {
@@ -157,31 +156,32 @@ func (g *Grid) NoAliveDeadNeighbours(c *Cell) (int, int) { // first: alive, seco
 	return noAlive, noDead
 
 }
-
+*/
 func (g *Grid) Evolve() {
-	var cellsToSwitchState []*Cell
-	for i := range g.C {
-		for j := range g.C[i] {
-			c := &g.C[i][j]
-			// 			noAliveNeighbours, noDeadNeighbours := g.NoAliveDeadNeighbours(c)
-			// 			fmt.Println("numbers ", i, j, " :", noAliveNeighbours, noDeadNeighbours)
-			noAliveNeighbours, _ := g.NoAliveDeadNeighbours(c)
-			switch {
-			case noAliveNeighbours == 3:
-				if c.state == Dead {
-					cellsToSwitchState = append(cellsToSwitchState, c)
-				}
-			case noAliveNeighbours < 2 || noAliveNeighbours > 3:
-				if c.state == Alive {
-					cellsToSwitchState = append(cellsToSwitchState, c)
+	/*	var cellsToSwitchState []*Cell
+		for i := range g.C {
+			for j := range g.C[i] {
+				c := &g.C[i][j]
+				// 			noAliveNeighbours, noDeadNeighbours := g.NoAliveDeadNeighbours(c)
+				// 			fmt.Println("numbers ", i, j, " :", noAliveNeighbours, noDeadNeighbours)
+				noAliveNeighbours, _ := g.NoAliveDeadNeighbours(c)
+				switch {
+				case noAliveNeighbours == 3:
+					if c.state == Dead {
+						cellsToSwitchState = append(cellsToSwitchState, c)
+					}
+				case noAliveNeighbours < 2 || noAliveNeighbours > 3:
+					if c.state == Alive {
+						cellsToSwitchState = append(cellsToSwitchState, c)
+					}
 				}
 			}
 		}
-	}
 
-	for i := range cellsToSwitchState {
-		cellsToSwitchState[i].switchState()
-	}
+		for i := range cellsToSwitchState {
+			cellsToSwitchState[i].switchState()
+		}
+	*/
 }
 
 var grid *Grid
