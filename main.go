@@ -4,6 +4,7 @@
 package main
 
 import (
+	"fmt"
 	"math/rand"
 
 	"golang.org/x/exp/shiny/driver"
@@ -66,7 +67,6 @@ func (g *Grid) InitRandom() {
 	}
 }
 
-/*
 // The video referred to is
 //   https://www.youtube.com/watch?v=S-W0NX97DB0
 func (g *Grid) InitFirstExampleVideo() {
@@ -106,6 +106,14 @@ func (g *Grid) InitDie() {
 	g.C[N/2+1][N/2].state = Alive
 	g.C[N/2+1][N/2+1].state = Alive
 	g.C[N/2+2][N/2].state = Alive
+}
+
+func (g *Grid) InitConway() {
+	g.C[N/2][N/2].state = Alive
+	g.C[N/2-1][N/2].state = Alive
+	g.C[N/2+1][N/2].state = Alive
+	g.C[N/2][N/2-1].state = Alive
+	g.C[N/2+1][N/2+1].state = Alive
 }
 
 func (g *Grid) Neighbours(c *Cell) []*Cell {
@@ -156,39 +164,40 @@ func (g *Grid) NoAliveDeadNeighbours(c *Cell) (int, int) { // first: alive, seco
 	return noAlive, noDead
 
 }
-*/
+
 func (g *Grid) Evolve() {
-	/*	var cellsToSwitchState []*Cell
-		for i := range g.C {
-			for j := range g.C[i] {
-				c := &g.C[i][j]
-				// 			noAliveNeighbours, noDeadNeighbours := g.NoAliveDeadNeighbours(c)
-				// 			fmt.Println("numbers ", i, j, " :", noAliveNeighbours, noDeadNeighbours)
-				noAliveNeighbours, _ := g.NoAliveDeadNeighbours(c)
-				switch {
-				case noAliveNeighbours == 3:
-					if c.state == Dead {
-						cellsToSwitchState = append(cellsToSwitchState, c)
-					}
-				case noAliveNeighbours < 2 || noAliveNeighbours > 3:
-					if c.state == Alive {
-						cellsToSwitchState = append(cellsToSwitchState, c)
-					}
+	var cellsToSwitchState []*Cell
+	for i := range g.C {
+		for j := range g.C[i] {
+			c := &g.C[i][j]
+			// 			noAliveNeighbours, noDeadNeighbours := g.NoAliveDeadNeighbours(c)
+			// 			fmt.Println("numbers ", i, j, " :", noAliveNeighbours, noDeadNeighbours)
+			noAliveNeighbours, _ := g.NoAliveDeadNeighbours(c)
+			switch {
+			case noAliveNeighbours == 3:
+				if c.state == Dead {
+					cellsToSwitchState = append(cellsToSwitchState, c)
+				}
+			case noAliveNeighbours < 2 || noAliveNeighbours > 3:
+				if c.state == Alive {
+					cellsToSwitchState = append(cellsToSwitchState, c)
 				}
 			}
 		}
+	}
 
-		for i := range cellsToSwitchState {
-			cellsToSwitchState[i].switchState()
-		}
-	*/
+	for i := range cellsToSwitchState {
+		cellsToSwitchState[i].switchState()
+	}
 }
 
 var grid *Grid
 
 func init() {
 	grid = NewGrid()
-	grid.InitRandom()
+	// 	grid.InitRandom()
+		grid.InitConway()
+// 	grid.Init4Clignotants()
 }
 
 func main() {

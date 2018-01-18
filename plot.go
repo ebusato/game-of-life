@@ -84,10 +84,10 @@ func GridGraph(scr screen.Screen) {
 				}
 			case key.CodeSpacebar:
 				if e.Direction == key.DirPress {
-					grid.Evolve()
 					p := Plot(grid)
 					p.Draw(draw.New(c))
 					c.Send(paint.Event{})
+					grid.Evolve()
 				}
 			}
 		case paint.Event:
