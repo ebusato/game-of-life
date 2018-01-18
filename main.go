@@ -116,6 +116,52 @@ func (g *Grid) InitConway() {
 	g.C[N/2+1][N/2+1].state = Alive
 }
 
+func (g *Grid) InitCanonAPlaneur() {
+	g.C[10][10].state = Alive
+	g.C[11][10].state = Alive
+	g.C[10][11].state = Alive
+	g.C[11][11].state = Alive
+
+	g.C[10][20].state = Alive
+	g.C[11][20].state = Alive
+	g.C[12][20].state = Alive
+	g.C[13][21].state = Alive
+	g.C[14][22].state = Alive
+	g.C[14][23].state = Alive
+	g.C[9][21].state = Alive
+	g.C[8][22].state = Alive
+	g.C[8][23].state = Alive
+
+	g.C[11][24].state = Alive
+	g.C[13][25].state = Alive
+	g.C[9][25].state = Alive
+	g.C[10][26].state = Alive
+	g.C[11][26].state = Alive
+	g.C[12][26].state = Alive
+	g.C[11][27].state = Alive
+
+	g.C[10][30].state = Alive
+	g.C[10][31].state = Alive
+	g.C[9][30].state = Alive
+	g.C[9][31].state = Alive
+	g.C[8][30].state = Alive
+	g.C[8][31].state = Alive
+
+	g.C[11][32].state = Alive
+	g.C[7][32].state = Alive
+
+	g.C[11][34].state = Alive
+	g.C[12][34].state = Alive
+
+	g.C[7][34].state = Alive
+	g.C[6][34].state = Alive
+
+	g.C[9][44].state = Alive
+	g.C[9][45].state = Alive
+	g.C[8][44].state = Alive
+	g.C[8][45].state = Alive
+}
+
 func (g *Grid) Neighbours(c *Cell) []*Cell {
 	var neighbours []*Cell
 	if c.i > 0 {
@@ -196,8 +242,9 @@ var grid *Grid
 func init() {
 	grid = NewGrid()
 	// 	grid.InitRandom()
-		grid.InitConway()
-// 	grid.Init4Clignotants()
+	// 		grid.InitConway()
+	grid.InitCanonAPlaneur()
+	// 	grid.Init4Clignotants()
 }
 
 func main() {
